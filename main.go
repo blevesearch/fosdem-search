@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/blevesearch/bleve"
 	bleveHttp "github.com/blevesearch/bleve/http"
@@ -13,6 +14,7 @@ import (
 var indexPath = flag.String("index", "fosdem.bleve", "index path")
 var eventsPath = flag.String("events", "fosdem.ical", "fosdem events ical path")
 var bindAddr = flag.String("addr", ":8099", "http listen address")
+var update = flag.Duration("update", 0, "update every")
 
 func main() {
 
@@ -35,6 +37,18 @@ func main() {
 
 	// insert/update index in background
 	go batchIndexEvents(index, *eventsPath)
+
+	// update data periodically
+	if *update > 0 {
+		log.Printf("Updating every: %s", *update)
+		ticker := time.NewTicker(*update)
+		go func() {
+			for _ = range ticker.C {
+				log.Printf("Updating now")
+				go batchIndexEvents(index, *eventsPath)
+			}
+		}()
+	}
 
 	// start server
 	startServer(index, *bindAddr)

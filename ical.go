@@ -2,7 +2,9 @@ package main
 
 import (
 	"bufio"
+	"io"
 	"log"
+	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -17,14 +19,33 @@ func parseEvents(path string) chan *Event {
 		defer close(rv)
 
 		var event *Event
-		file, err := os.Open(path)
-		if err != nil {
-			log.Fatal(err)
+		var input io.ReadCloser
+		if strings.HasPrefix(path, "http://") ||
+			strings.HasPrefix(path, "https://") {
+			log.Printf("Loading events from URL: %s", path)
+			resp, err := http.Get(path)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			if resp.StatusCode != 200 {
+				log.Println("bad GET status for "+path, resp.Status)
+				return
+			}
+			input = resp.Body
+		} else {
+			log.Printf("Loading events from file: %s", path)
+			file, err := os.Open(path)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+			input = file
 		}
-		defer file.Close()
+		defer input.Close()
 
 		var location *time.Location
-		scanner := bufio.NewScanner(file)
+		scanner := bufio.NewScanner(input)
 		for scanner.Scan() {
 			line := scanner.Text()
 			if strings.HasPrefix(line, "BEGIN") {
@@ -70,6 +91,7 @@ func parseEvents(path string) chan *Event {
 					loc := line[colon+1:]
 					loc = strings.TrimSpace(loc)
 					loc = strings.Replace(loc, "-", "/", -1)
+					var err error
 					location, err = time.LoadLocation(loc)
 					if err != nil {
 						log.Printf("error loading location: %v", err)
@@ -108,11 +130,6 @@ func parseEvents(path string) chan *Event {
 					}
 					startTime, err := time.ParseInLocation(iCalTimeFormat, start, location)
 					if err == nil {
-						// if location != nil {
-						// 	orig := startTime
-						// 	startTime = startTime.In(location)
-						// 	log.Printf("adjusted from %v to %v", orig.UnixNano(), startTime.UnixNano())
-						// }
 						event.Start = startTime
 					}
 				}
@@ -127,9 +144,6 @@ func parseEvents(path string) chan *Event {
 					endTime, err := time.ParseInLocation(iCalTimeFormat, end, location)
 					if err == nil {
 						if !event.Start.IsZero() {
-							// if location != nil {
-							// 	endTime = endTime.In(location)
-							// }
 							duration := endTime.Sub(event.Start)
 							event.Duration = duration.Minutes()
 						}
@@ -157,7 +171,8 @@ func parseEvents(path string) chan *Event {
 		}
 
 		if err := scanner.Err(); err != nil {
-			log.Fatal(err)
+			log.Println(err)
+			return
 		}
 	}()
 
