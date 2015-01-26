@@ -16,6 +16,8 @@ var eventsPath = flag.String("events", "fosdem.ical", "fosdem events ical path")
 var bindAddr = flag.String("addr", ":8099", "http listen address")
 var update = flag.Duration("update", 0, "update every")
 
+var lastUpdated time.Time
+
 func main() {
 
 	flag.Parse()
@@ -62,6 +64,8 @@ func startServer(index bleve.Index, addr string) {
 	bleveHttp.RegisterIndexName("fosdem", index)
 	searchHandler := bleveHttp.NewSearchHandler("fosdem")
 	router.Handle("/api/search", searchHandler).Methods("POST")
+	lastHandler := new(lastUpdatedHandler)
+	router.Handle("/api/lastUpdated", lastHandler).Methods("GET")
 
 	http.Handle("/", router)
 	log.Printf("Listening on %v", addr)

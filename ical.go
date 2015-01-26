@@ -32,6 +32,7 @@ func parseEvents(path string) chan *Event {
 				log.Println("bad GET status for "+path, resp.Status)
 				return
 			}
+			lastUpdated = time.Now()
 			input = resp.Body
 		} else {
 			log.Printf("Loading events from file: %s", path)

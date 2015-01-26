@@ -9,8 +9,11 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
+	"io"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -59,4 +62,28 @@ func RewriteURL(to string, h http.Handler) http.Handler {
 		r.URL.Path = to
 		h.ServeHTTP(w, r)
 	})
+}
+
+func mustEncode(w io.Writer, i interface{}) {
+	if headered, ok := w.(http.ResponseWriter); ok {
+		headered.Header().Set("Cache-Control", "no-cache")
+		headered.Header().Set("Content-type", "application/json")
+	}
+
+	e := json.NewEncoder(w)
+	if err := e.Encode(i); err != nil {
+		panic(err)
+	}
+}
+
+type lastUpdatedHandler struct {
+}
+
+func (h *lastUpdatedHandler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	rv := struct {
+		LastUpdated time.Time `json:"last_updated"`
+	}{
+		LastUpdated: lastUpdated,
+	}
+	mustEncode(w, rv)
 }

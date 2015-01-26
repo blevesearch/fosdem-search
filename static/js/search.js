@@ -7,6 +7,11 @@ function SearchCtrl($scope, $http, $routeParams, $log, $sce, $location) {
     $scope.page = 1;
     $scope.filters = {};
 
+    $http.get('/api/lastUpdated').
+        success(function(data) {
+            $scope.lastUpdated = data.last_updated;
+        });
+
     $scope.updateSyntax = function() {
         $scope.page = 1;
         $location.search('q', $scope.syntax);
