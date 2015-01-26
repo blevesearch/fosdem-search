@@ -16,6 +16,8 @@ var bindAddr = flag.String("addr", ":8099", "http listen address")
 
 func main() {
 
+	flag.Parse()
+
 	// turn on http request logging
 	bleveHttp.SetLog(log.New(os.Stderr, "bleve.http", log.LstdFlags))
 
