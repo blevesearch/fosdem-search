@@ -74,3 +74,12 @@ body {
   font-size:0.7em;
   font-style: italic;
 }
+
+.nolink {
+  color: black;
+}
+
+.nolink:hover {
+  text-decoration:none;
+  color: black;
+}
