@@ -82,7 +82,7 @@ function SearchCtrl($scope, $http, $routeParams, $log, $sce, $location) {
             "from": from,
             "explain": true,
             "highlight":{
-                "fields": ["summary", "description"],
+                "fields": ["description"],
             },
             "query":  {
                 "conjuncts": conjuncts
