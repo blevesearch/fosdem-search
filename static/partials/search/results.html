@@ -40,19 +40,19 @@
         <div class="panel-body">
             <div ng-repeat="term in facetDetails.terms" class="checkbox">
               <label>
-                <input type="checkbox" value="" data-ng-checked="checkFilter(facetDetails.field)"ng-click="filterTerm(facetDetails.field, term.term)">
+                <input type="checkbox" value="" data-ng-checked="checkFilter(facetDetails.field)"ng-click="filterTerm(term.term)">
                 {{term.term}} ({{term.count}})
               </label>
             </div>
             <div ng-repeat="dr in facetDetails.date_ranges" class="checkbox">
               <label>
-                <input type="checkbox" value="" data-ng-checked="checkFilter(facetDetails.field)"ng-click="filterDate(facetDetails.field, dr.start, dr.end)">
+                <input type="checkbox" value="" data-ng-checked="checkFilter(facetDetails.field)"ng-click="filterDate(dr.name)">
                 {{dr.name}} ({{dr.count}})
               </label>
             </div>
             <div ng-repeat="nr in facetDetails.numeric_ranges" class="checkbox">
               <label>
-                <input type="checkbox" value="" data-ng-checked="checkFilter(facetDetails.field)"ng-click="filterNumber(facetDetails.field, nr.min, nr.max)">
+                <input type="checkbox" value="" data-ng-checked="checkFilter(facetDetails.field)"ng-click="filterNumber(nr.name)">
                 {{nr.name}} ({{nr.count}})
               </label>
             </div>
