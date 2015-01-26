@@ -80,7 +80,8 @@ func batchIndexEvents(index bleve.Index, path string) {
 		if batch.Size() >= 100 {
 			err := index.Batch(batch)
 			if err != nil {
-				log.Fatal(err)
+				log.Println(err)
+				return
 			}
 			count += batch.Size()
 			log.Printf("Indexed %d Events\n", count)
@@ -90,7 +91,8 @@ func batchIndexEvents(index bleve.Index, path string) {
 	if batch.Size() > 0 {
 		err := index.Batch(batch)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
+			return
 		}
 		count += batch.Size()
 	}
