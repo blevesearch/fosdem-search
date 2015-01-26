@@ -77,9 +77,25 @@ body {
 
 .nolink {
   color: black;
+  text-decoration:none;
 }
 
 .nolink:hover {
+  text-decoration:none;
+  color: black;
+}
+
+.nolink:visited {
+  text-decoration:none;
+  color: black;
+}
+
+.nolink:active {
+  text-decoration:none;
+  color: black;
+}
+
+.nolink:link {
   text-decoration:none;
   color: black;
 }
