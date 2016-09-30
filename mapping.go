@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/blevesearch/bleve"
-	"github.com/blevesearch/bleve/analysis/analyzers/keyword_analyzer"
-	"github.com/blevesearch/bleve/analysis/language/en"
+	"github.com/blevesearch/bleve/analysis/lang/en"
+	"github.com/blevesearch/bleve/analysis/tokens/keyword"
 	"github.com/blevesearch/bleve/mapping"
 )
 
@@ -16,7 +16,7 @@ func buildMapping() mapping.IndexMapping {
 	eventMapping.AddFieldMappingsAt("description", enFieldMapping)
 
 	kwFieldMapping := bleve.NewTextFieldMapping()
-	kwFieldMapping.Analyzer = keyword_analyzer.Name
+	kwFieldMapping.Analyzer = keyword.Name
 
 	eventMapping.AddFieldMappingsAt("url", kwFieldMapping)
 	eventMapping.AddFieldMappingsAt("category", kwFieldMapping)
