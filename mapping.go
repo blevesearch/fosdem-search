@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/blevesearch/bleve"
 	"github.com/blevesearch/bleve/analysis/lang/en"
-	"github.com/blevesearch/bleve/analysis/tokens/keyword"
+	"github.com/blevesearch/bleve/analysis/token/keyword"
 	"github.com/blevesearch/bleve/mapping"
 )
 
